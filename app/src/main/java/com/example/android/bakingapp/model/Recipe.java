@@ -2,54 +2,59 @@ package com.example.android.bakingapp.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.android.bakingapp.database.BakingContract;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import static com.example.android.bakingapp.Utils.RECIPE_TABLE_NAME;
+import static com.example.android.bakingapp.Utils.INGREDIENTS;
+import static com.example.android.bakingapp.Utils.STEPS;
 
 /**
  * Created by Alessandro on 11/04/2018.
  */
 
-@Entity(tableName = RECIPE_TABLE_NAME)
+@Entity(tableName = BakingContract.RecipeEntry.TABLE_NAME)
 public class Recipe implements Parcelable {
 
-    public static final String ID = "id";
-    public static final String NAME = "name";
-    public static final String INGREDIENTS = "ingredients";
-    public static final String STEPS = "steps";
-    public static final String SERVINGS = "servings";
-    public static final String IMAGE = "image";
 
-    @SerializedName(ID)
+    @SerializedName(BakingContract.RecipeEntry.COLUMN_ID)
     @PrimaryKey
     int id;
 
-    @SerializedName(NAME)
-    @ColumnInfo(name = NAME)
+    @SerializedName(BakingContract.RecipeEntry.COLUMN_NAME)
+    @ColumnInfo(name = BakingContract.RecipeEntry.COLUMN_NAME)
     String name;
 
     @SerializedName(INGREDIENTS)
-    ArrayList<Ingredients> ingredient;
+            @Ignore
+    ArrayList<Ingredients> ingredient = null;
 
     @SerializedName(STEPS)
-    ArrayList<Steps> step;
+            @Ignore
+    ArrayList<Steps> step = null;
 
-    @SerializedName(SERVINGS)
-    @ColumnInfo(name = SERVINGS)
+    @SerializedName(BakingContract.RecipeEntry.COLUMN_SERVINGS)
+    @ColumnInfo(name = BakingContract.RecipeEntry.COLUMN_SERVINGS)
     int servings;
 
-    @SerializedName(IMAGE)
-    @ColumnInfo(name = IMAGE)
+    boolean favorite;
+
+    @SerializedName(BakingContract.RecipeEntry.COLUMN_IMAGE)
+    @ColumnInfo(name = BakingContract.RecipeEntry.COLUMN_IMAGE)
     String image;
 
     public Recipe() {
+    }
+
+    public boolean getFavorite(){
+        return favorite;
     }
 
     public int getId() {
@@ -100,6 +105,12 @@ public class Recipe implements Parcelable {
         this.image = image;
     }
 
+    public void setFavorite(boolean favorite){
+        this.favorite = favorite;
+    }
+
+
+
     /**
      * Create a new {@link Recipe} from the specified {@link ContentValues}.
      *
@@ -112,17 +123,17 @@ public class Recipe implements Parcelable {
 
         final Recipe recipe = new Recipe();
 
-        if (values.containsKey(ID)) {
-            recipe.setId(values.getAsInteger(ID));
+        if (values.containsKey(BakingContract.RecipeEntry.COLUMN_ID)) {
+            recipe.setId(values.getAsInteger(BakingContract.RecipeEntry.COLUMN_ID));
         }
-        if (values.containsKey(NAME)) {
-            recipe.setName(values.getAsString(NAME));
+        if (values.containsKey(BakingContract.RecipeEntry.COLUMN_NAME)) {
+            recipe.setName(values.getAsString(BakingContract.RecipeEntry.COLUMN_NAME));
         }
-        if (values.containsKey(SERVINGS)) {
-            recipe.setServings(values.getAsInteger(SERVINGS));
+        if (values.containsKey(BakingContract.RecipeEntry.COLUMN_SERVINGS)) {
+            recipe.setServings(values.getAsInteger(BakingContract.RecipeEntry.COLUMN_SERVINGS));
         }
-        if (values.containsKey(IMAGE)) {
-            recipe.setImage(values.getAsString(IMAGE));
+        if (values.containsKey(BakingContract.RecipeEntry.COLUMN_IMAGE)) {
+            recipe.setImage(values.getAsString(BakingContract.RecipeEntry.COLUMN_IMAGE));
         }
 
         return recipe;
@@ -137,24 +148,24 @@ public class Recipe implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
         dest.writeString(this.name);
-        dest.writeList(this.ingredient);
-        dest.writeList(this.step);
+        dest.writeTypedList(this.ingredient);
+        dest.writeTypedList(this.step);
         dest.writeInt(this.servings);
+        dest.writeByte(this.favorite ? (byte) 1 : (byte) 0);
         dest.writeString(this.image);
     }
 
     protected Recipe(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();
-        this.ingredient = new ArrayList<Ingredients>();
-        in.readList(this.ingredient, Ingredients.class.getClassLoader());
-        this.step = new ArrayList<Steps>();
-        in.readList(this.step, Steps.class.getClassLoader());
+        this.ingredient = in.createTypedArrayList(Ingredients.CREATOR);
+        this.step = in.createTypedArrayList(Steps.CREATOR);
         this.servings = in.readInt();
+        this.favorite = in.readByte() != 0;
         this.image = in.readString();
     }
 
-    public static final Parcelable.Creator<Recipe> CREATOR = new Parcelable.Creator<Recipe>() {
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
         @Override
         public Recipe createFromParcel(Parcel source) {
             return new Recipe(source);

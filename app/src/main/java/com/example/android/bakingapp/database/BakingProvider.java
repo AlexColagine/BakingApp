@@ -16,21 +16,13 @@ import com.example.android.bakingapp.model.Steps;
 
 import java.util.ArrayList;
 
-import static com.example.android.bakingapp.Utils.INGREDIENTS_TABLE_NAME;
-import static com.example.android.bakingapp.Utils.RECIPE_TABLE_NAME;
-import static com.example.android.bakingapp.Utils.STEPS_TABLE_NAME;
+import static com.example.android.bakingapp.database.BakingContract.CONTENT_AUTHORITY;
 
 /**
  * Created by Alessandro on 11/04/2018.
  */
 
 public class BakingProvider extends ContentProvider {
-
-    /** The authority of this content provider. */
-    public static final String CONTENT_AUTHORITY = "com.example.android.bakingapp";
-
-    /** The URI for the Recipe table. */
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     /** The match code for some items table. */
     private static final int CODE_RECIPES = 101;
@@ -46,14 +38,14 @@ public class BakingProvider extends ContentProvider {
     private static final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        matcher.addURI(CONTENT_AUTHORITY, RECIPE_TABLE_NAME, CODE_RECIPES);
-        matcher.addURI(CONTENT_AUTHORITY, RECIPE_TABLE_NAME + "/#", CODE_RECIPES_WITH_ID);
+        matcher.addURI(CONTENT_AUTHORITY, BakingContract.RecipeEntry.TABLE_NAME, CODE_RECIPES);
+        matcher.addURI(CONTENT_AUTHORITY, BakingContract.RecipeEntry.TABLE_NAME + "/#", CODE_RECIPES_WITH_ID);
 
-        matcher.addURI(CONTENT_AUTHORITY, INGREDIENTS_TABLE_NAME, CODE_INGREDIENTS);
-        matcher.addURI(CONTENT_AUTHORITY, INGREDIENTS_TABLE_NAME + "/#", CODE_INGREDIENTS_WITH_ID);
+        matcher.addURI(CONTENT_AUTHORITY, BakingContract.IngredientsEntry.TABLE_NAME, CODE_INGREDIENTS);
+        matcher.addURI(CONTENT_AUTHORITY, BakingContract.IngredientsEntry.TABLE_NAME + "/#", CODE_INGREDIENTS_WITH_ID);
 
-        matcher.addURI(CONTENT_AUTHORITY, STEPS_TABLE_NAME, CODE_STEPS);
-        matcher.addURI(CONTENT_AUTHORITY, STEPS_TABLE_NAME + "/#", CODE_STEPS_WITH_ID);
+        matcher.addURI(CONTENT_AUTHORITY, BakingContract.StepsEntry.TABLE_NAME, CODE_STEPS);
+        matcher.addURI(CONTENT_AUTHORITY, BakingContract.StepsEntry.TABLE_NAME + "/#", CODE_STEPS_WITH_ID);
 
     }
 
@@ -80,12 +72,12 @@ public class BakingProvider extends ContentProvider {
                 cursor.setNotificationUri(context.getContentResolver(), uri);
                 break;
             case CODE_INGREDIENTS:
-                id = uri.getQueryParameter(Ingredients.ID);
+                id = uri.getQueryParameter(BakingContract.IngredientsEntry.COLUMN_ID);
                 cursor = bakingDb.ingredientsDao().selectIngredientsById(Integer.valueOf(id));
                 cursor.setNotificationUri(context.getContentResolver(), uri);
                 break;
             case CODE_STEPS:
-                id = uri.getQueryParameter(Steps.ID);
+                id = uri.getQueryParameter(BakingContract.StepsEntry.COLUMN_ID);
                 cursor = bakingDb.stepsDao().selectStepsById(Integer.valueOf(id));
                 cursor.setNotificationUri(context.getContentResolver(), uri);
                 break;
@@ -143,12 +135,12 @@ public class BakingProvider extends ContentProvider {
                 context.getContentResolver().notifyChange(uri, null);
                 return count;
             case CODE_INGREDIENTS:
-                id = uri.getQueryParameter(Ingredients.ID);
+                id = uri.getQueryParameter(BakingContract.IngredientsEntry.COLUMN_ID);
                 count = bakingDb.ingredientsDao().deleteIngredientsById(Integer.valueOf(id));
                 context.getContentResolver().notifyChange(uri, null);
                 return count;
             case CODE_STEPS:
-                id = uri.getQueryParameter(Ingredients.ID);
+                id = uri.getQueryParameter(BakingContract.IngredientsEntry.COLUMN_ID);
                 count = bakingDb.stepsDao().deleteStepsById(Integer.valueOf(id));
                 context.getContentResolver().notifyChange(uri, null);
                 return count;

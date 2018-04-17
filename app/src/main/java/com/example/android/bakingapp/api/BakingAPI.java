@@ -16,7 +16,7 @@ public class BakingAPI {
 
     public static final String BAKING_URL = "https://d17h27t6h515a5.cloudfront.net/";
 
-    public EndPoint getRequest(){
+    public static EndPoint getRequest(){
         return new Retrofit.Builder()
                 .baseUrl(BAKING_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -24,7 +24,7 @@ public class BakingAPI {
                 .create(EndPoint.class);
     }
 
-    public Call<ArrayList<Recipe>> getRecipes() {
+    public static Call<ArrayList<Recipe>> getRecipes() {
         return getRequest().getRecipes();
     }
 

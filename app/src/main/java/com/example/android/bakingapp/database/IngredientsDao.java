@@ -6,7 +6,6 @@ import android.arch.persistence.room.Query;
 import android.database.Cursor;
 
 import com.example.android.bakingapp.model.Ingredients;
-import com.example.android.bakingapp.model.Steps;
 
 import java.util.ArrayList;
 
@@ -26,8 +25,8 @@ public interface IngredientsDao {
     @Query("DELETE FROM Ingredients WHERE id = :id")
     int deleteIngredientsById(int id);
 
-    @Query("SELECT * FROM Ingredients WHERE id = :id")
-    Steps getIngredients(int id);
+  /*  @Query("SELECT * FROM Ingredients WHERE id = :id")
+    Steps getIngredients(int id); */
 
     @Query("SELECT * FROM Ingredients WHERE id = :id")
     Cursor selectIngredientsById(int id);

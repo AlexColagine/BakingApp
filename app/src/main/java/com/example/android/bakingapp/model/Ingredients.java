@@ -7,35 +7,30 @@ import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.android.bakingapp.database.BakingContract;
 import com.google.gson.annotations.SerializedName;
-
-import static com.example.android.bakingapp.Utils.INGREDIENTS_TABLE_NAME;
 
 /**
  * Created by Alessandro on 11/04/2018.
  */
 
-@Entity(tableName = INGREDIENTS_TABLE_NAME)
+@Entity(tableName = BakingContract.IngredientsEntry.TABLE_NAME)
 public class Ingredients implements Parcelable {
 
-    public static final String ID = "id";
-    public static final String QUANTITY = "quantity";
-    public static final String MEASURE = "measure";
-    public static final String INGREDIENT = "ingredient";
 
     @PrimaryKey(autoGenerate = true)
     int id;
 
-    @SerializedName(QUANTITY)
-    @ColumnInfo(name = QUANTITY)
+    @SerializedName(BakingContract.IngredientsEntry.COLUMN_QUANTITY)
+    @ColumnInfo(name = BakingContract.IngredientsEntry.COLUMN_QUANTITY)
     double quantity;
 
-    @SerializedName(MEASURE)
-    @ColumnInfo(name = MEASURE)
+    @SerializedName(BakingContract.IngredientsEntry.COLUMN_MEASURE)
+    @ColumnInfo(name = BakingContract.IngredientsEntry.COLUMN_MEASURE)
     String measure;
 
-    @SerializedName(INGREDIENT)
-    @ColumnInfo(name = INGREDIENT)
+    @SerializedName(BakingContract.IngredientsEntry.COLUMN_INGREDIENT)
+    @ColumnInfo(name = BakingContract.IngredientsEntry.COLUMN_INGREDIENT)
     String ingredient;
 
 
@@ -86,17 +81,17 @@ public class Ingredients implements Parcelable {
 
         final Ingredients ingredients = new Ingredients();
 
-        if (values.containsKey(ID)) {
-            ingredients.setId(values.getAsInteger(ID));
+        if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_ID)) {
+            ingredients.setId(values.getAsInteger(BakingContract.IngredientsEntry.COLUMN_ID));
         }
-        if (values.containsKey(QUANTITY)) {
-            ingredients.setQuantity(values.getAsDouble(QUANTITY));
+        if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_QUANTITY)) {
+            ingredients.setQuantity(values.getAsDouble(BakingContract.IngredientsEntry.COLUMN_QUANTITY));
         }
-        if (values.containsKey(MEASURE)) {
-            ingredients.setMeasure(values.getAsString(MEASURE));
+        if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_MEASURE)) {
+            ingredients.setMeasure(values.getAsString(BakingContract.IngredientsEntry.COLUMN_MEASURE));
         }
-        if (values.containsKey(INGREDIENT)) {
-            ingredients.setIngredient(values.getAsString(INGREDIENT));
+        if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_INGREDIENT)) {
+            ingredients.setIngredient(values.getAsString(BakingContract.IngredientsEntry.COLUMN_INGREDIENT));
         }
 
         return ingredients;
