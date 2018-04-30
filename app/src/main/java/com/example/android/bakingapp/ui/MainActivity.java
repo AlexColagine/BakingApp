@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        updateUi();
+        updateRecipeUi();
         getApi();
 
     }
 
-    private void getApi(){
+    private void getApi() {
 
         EndPoint api = BakingAPI.getRequest();
         Call<ArrayList<Recipe>> response = api.getRecipes();
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         response.enqueue(new Callback<ArrayList<Recipe>>() {
             @Override
             public void onResponse(Call<ArrayList<Recipe>> call, Response<ArrayList<Recipe>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     recipeList.addAll(response.body());
                 }
                 swipe.setRefreshing(false);
@@ -67,24 +67,24 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     }
 
-    private void updateUi(){
-        swipe = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+    private void updateRecipeUi() {
+        swipe = findViewById(R.id.swiperefresh);
         swipe.setOnRefreshListener(this);
 
-        errorMessage = (TextView) findViewById(R.id.empty_text);
-        recipeView = (RecyclerView) findViewById(R.id.recycler);
-        recipeView.setLayoutManager(new LinearLayoutManager(getApplicationContext() , LinearLayoutManager.VERTICAL , false));
+        errorMessage = findViewById(R.id.empty_text);
+        recipeView = findViewById(R.id.recycler_recipe);
+        recipeView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         recipeView.setHasFixedSize(true);
-        recipeAdapter = new RecipeAdapter(getApplicationContext() , new ArrayList<Recipe>());
+        recipeAdapter = new RecipeAdapter(getApplicationContext(), recipeList);
         recipeView.setAdapter(recipeAdapter);
 
-        loadingIndicator = (ProgressBar) findViewById(R.id.loading_spinner);
+        loadingIndicator = findViewById(R.id.loading_spinner);
         loadingIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onRefresh() {
-        if(recipeList.size() != 0){
+        if (recipeList.size() != 0) {
             recipeList.clear();
             getApi();
         }

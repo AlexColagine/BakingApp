@@ -1,10 +1,5 @@
 package com.example.android.bakingapp.api;
 
-import com.example.android.bakingapp.model.Recipe;
-
-import java.util.ArrayList;
-
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -23,9 +18,4 @@ public class BakingAPI {
                 .build()
                 .create(EndPoint.class);
     }
-
-    public static Call<ArrayList<Recipe>> getRecipes() {
-        return getRequest().getRecipes();
-    }
-
 }

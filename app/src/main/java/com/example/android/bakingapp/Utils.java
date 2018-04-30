@@ -40,5 +40,6 @@ public class Utils {
     public static final String VIDEO_URL = "videoURL";
     public static final String THUMBNAIL_URL = "thumbnailURL";
 
+    public static final String RECIPE_KEY = "Recipe";
 
 }

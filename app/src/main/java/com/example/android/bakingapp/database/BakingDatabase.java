@@ -16,7 +16,7 @@ import com.example.android.bakingapp.model.Steps;
 /**
  * The Room database.
  */
-@Database(entities = {Recipe.class , Ingredients.class , Steps.class} , version = 1)
+@Database(entities = {Recipe.class , Ingredients.class , Steps.class} , version = 1 ,exportSchema = false)
 public abstract class BakingDatabase extends RoomDatabase {
 
     /**

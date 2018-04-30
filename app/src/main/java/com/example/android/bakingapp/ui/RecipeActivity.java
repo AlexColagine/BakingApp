@@ -12,15 +12,22 @@ import android.support.v7.widget.Toolbar;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.fragments.IngredientsFragment;
 import com.example.android.bakingapp.fragments.StepsFragment;
+import com.example.android.bakingapp.model.Recipe;
+
+import static com.example.android.bakingapp.Utils.RECIPE;
 
 public class RecipeActivity extends AppCompatActivity {
+
+    private IngredientsFragment ingredientsFragment;
+    private StepsFragment stepsFragment;
+    Recipe recipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         /**
          * Create the adapter that will return a fragment for each of the three
@@ -33,44 +40,32 @@ public class RecipeActivity extends AppCompatActivity {
          * may be best to switch to a
          * {@link android.support.v4.app.FragmentStatePagerAdapter}.
          * */
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        Bundle data = getIntent().getExtras();
+        recipe = data.getParcelable(RECIPE);
+
+        if (recipe != null && recipe.getName() != null) {
+            //noinspection ConstantConditions
+            getSupportActionBar().setTitle(recipe.getName());
+        }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        ingredientsFragment = IngredientsFragment.newInstance(recipe.getIngredient());
+        stepsFragment = StepsFragment.newInstance(recipe.getStep());
+
+
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(fragmentManager,
+                ingredientsFragment,
+                stepsFragment);
         /**
          * Set up the ViewPager with the sections adapter.
          *
          * The {@link ViewPager} that will host the section contents.
          */
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout =  findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
 
     }
 
@@ -81,21 +76,26 @@ public class RecipeActivity extends AppCompatActivity {
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
-        public SectionsPagerAdapter(FragmentManager fm) {
+        private IngredientsFragment ingredientsFragment;
+        private StepsFragment stepsFragment;
+
+        public SectionsPagerAdapter(FragmentManager fm ,
+                                    IngredientsFragment ingredientsFragment,
+                                    StepsFragment stepsFragment){
             super(fm);
+            this.ingredientsFragment = ingredientsFragment;
+            this.stepsFragment = stepsFragment;
         }
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new IngredientsFragment();
+                    return ingredientsFragment;
                 case 1:
-                    return new StepsFragment();
+                    return stepsFragment;
             }
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return null;
         }
 
         @Override
@@ -108,9 +108,9 @@ public class RecipeActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch(position){
                 case 0:
-                    return "Ingredients";
+                    return getString(R.string.fragment_ingredients);
                 case 1:
-                    return "Steps";
+                    return getString(R.string.fragment_steps);
             }
             return null;
         }

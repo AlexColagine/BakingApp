@@ -5,4 +5,13 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
     <string name="no_internet_connection">Connection not found!</string>
+
+    <string name="fragment_ingredients">Ingredients</string>
+    <string name="fragment_steps">Steps</string>
+
+    <string name="nutella">Nutella Pie</string>
+    <string name="brownies">Brownies</string>
+    <string name="y_cake">Yellow Cake</string>
+    <string name="cheesecake">Cheesecake</string>
+
 </resources>
