@@ -17,6 +17,8 @@ import com.example.android.bakingapp.model.Steps;
 
 import java.util.ArrayList;
 
+import static com.example.android.bakingapp.Utils.STEPS;
+
 /**
  * Created by Alessandro on 13/04/2018.
  */
@@ -31,7 +33,7 @@ public class StepsFragment extends Fragment {
     public static StepsFragment newInstance(ArrayList<Steps> stepsArrayList){
         StepsFragment stepsFragment = new StepsFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("steps", stepsArrayList);
+        bundle.putParcelableArrayList(STEPS, stepsArrayList);
         stepsFragment.setArguments(bundle);
 
         return stepsFragment;
@@ -52,7 +54,7 @@ public class StepsFragment extends Fragment {
         stepsView.addItemDecoration(new DividerItemDecoration(getContext() , LinearLayoutManager.VERTICAL));
         stepsView.setHasFixedSize(true);
         if(getArguments() != null){
-            stepsArrayList = getArguments().getParcelableArrayList("steps");
+            stepsArrayList = getArguments().getParcelableArrayList(STEPS);
         }
         stepsAdapter = new StepsAdapter(getContext() , stepsArrayList);
         stepsView.setAdapter(stepsAdapter);

@@ -15,6 +15,7 @@ public class Utils {
 
     /**
      * Entity Recipe
+     * INGREDIENTS and STEPS are used also for the Key ArrayList of Recipe
      */
     public static final String ID = "id";
     public static final String NAME = "name";
@@ -33,6 +34,7 @@ public class Utils {
 
     /**
      * Entity Steps
+     * DESCRIPTION - VIDEO_URL - THUMBNAIL_URL are used also for the Key ArrayList of Steps.
      */
     public static final String STEP_ID = "id";
     public static final String SHORT_DESCRIPTION = "shortDescription";
@@ -40,6 +42,9 @@ public class Utils {
     public static final String VIDEO_URL = "videoURL";
     public static final String THUMBNAIL_URL = "thumbnailURL";
 
+    /**
+     * Key used for the ArrayList of Recipe
+     */
     public static final String RECIPE_KEY = "Recipe";
 
 }

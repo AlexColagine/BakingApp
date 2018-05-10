@@ -5,9 +5,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.fragments.IngredientsFragment;
@@ -53,7 +55,7 @@ public class RecipeActivity extends AppCompatActivity {
         stepsFragment = StepsFragment.newInstance(recipe.getStep());
 
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(fragmentManager,
+        RecipePagerAdapter mRecipePagerAdapter = new RecipePagerAdapter(fragmentManager,
                 ingredientsFragment,
                 stepsFragment);
         /**
@@ -62,24 +64,35 @@ public class RecipeActivity extends AppCompatActivity {
          * The {@link ViewPager} that will host the section contents.
          */
         ViewPager mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setAdapter(mRecipePagerAdapter);
 
         TabLayout tabLayout =  findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            NavUtils.navigateUpFromSameTask(RecipeActivity.this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class RecipePagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
         private IngredientsFragment ingredientsFragment;
         private StepsFragment stepsFragment;
 
-        public SectionsPagerAdapter(FragmentManager fm ,
+        public RecipePagerAdapter(FragmentManager fm ,
                                     IngredientsFragment ingredientsFragment,
                                     StepsFragment stepsFragment){
             super(fm);

@@ -17,6 +17,8 @@ import com.example.android.bakingapp.model.Ingredients;
 
 import java.util.ArrayList;
 
+import static com.example.android.bakingapp.Utils.INGREDIENTS;
+
 /**
  * Created by Alessandro on 13/04/2018.
  */
@@ -31,7 +33,7 @@ public class IngredientsFragment extends Fragment {
     public static IngredientsFragment newInstance(ArrayList<Ingredients> ingredientsArrayList){
         IngredientsFragment ingredientsFragment = new IngredientsFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("ingredients", ingredientsArrayList);
+        bundle.putParcelableArrayList(INGREDIENTS, ingredientsArrayList);
         ingredientsFragment.setArguments(bundle);
 
         return ingredientsFragment;
@@ -53,7 +55,7 @@ public class IngredientsFragment extends Fragment {
         ingredientsView.addItemDecoration(new DividerItemDecoration(getContext() , LinearLayoutManager.VERTICAL));
         ingredientsView.setHasFixedSize(true);
         if(getArguments() != null){
-            ingredientsArrayList = getArguments().getParcelableArrayList("ingredients");
+            ingredientsArrayList = getArguments().getParcelableArrayList(INGREDIENTS);
         }
         ingredientsAdapter = new IngredientsAdapter(getContext() , ingredientsArrayList);
         ingredientsView.setAdapter(ingredientsAdapter);
