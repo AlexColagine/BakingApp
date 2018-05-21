@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,11 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.bakingapp.R;
-import com.example.android.bakingapp.model.Steps;
+import com.example.android.bakingapp.utils.Connectivity;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -42,15 +45,20 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import static com.example.android.bakingapp.Utils.DESCRIPTION;
-import static com.example.android.bakingapp.Utils.STEPS;
-import static com.example.android.bakingapp.Utils.THUMBNAIL_URL;
-import static com.example.android.bakingapp.Utils.VIDEO_URL;
+import static com.example.android.bakingapp.utils.StringUtils.DESCRIPTION;
+import static com.example.android.bakingapp.utils.StringUtils.PLAYER_POSITION;
+import static com.example.android.bakingapp.utils.StringUtils.PLAYER_STATE;
+import static com.example.android.bakingapp.utils.StringUtils.SHORT_DESCRIPTION;
+import static com.example.android.bakingapp.utils.StringUtils.STEPS;
+import static com.example.android.bakingapp.utils.StringUtils.STEP_ID;
+import static com.example.android.bakingapp.utils.StringUtils.THUMBNAIL_URL;
+import static com.example.android.bakingapp.utils.StringUtils.VIDEO_URL;
 
 /**
  * Created by Alessandro on 02/05/2018.
  */
 
+@SuppressWarnings("ConstantConditions")
 public class SingleStepFragment extends Fragment implements ExoPlayer.EventListener {
 
     private static MediaSessionCompat mMediaSession;
@@ -62,19 +70,27 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
     private Dialog mFullScreenDialog;
     ImageView mFullScreenIcon;
     View rootView;
-    Steps step;
+    long playerPosition;
+    boolean playerState;
+    String videoUrl;
+    String thumbnailUrl;
+    ProgressBar loading;
 
     public SingleStepFragment() {
     }
 
     public static SingleStepFragment newInstance(String description,
                                                  String video,
-                                                 String thumbnail) {
+                                                 String thumbnail,
+                                                 String shortDesc,
+                                                 int id) {
         SingleStepFragment singleStepFragment = new SingleStepFragment();
         Bundle bundle = new Bundle();
         bundle.putString(DESCRIPTION, description);
         bundle.putString(VIDEO_URL, video);
         bundle.putString(THUMBNAIL_URL, thumbnail);
+        bundle.putString(SHORT_DESCRIPTION, shortDesc);
+        bundle.putInt(STEP_ID, id);
         singleStepFragment.setArguments(bundle);
 
         return singleStepFragment;
@@ -85,14 +101,32 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_single_step, container, false);
 
+        if (savedInstanceState != null) {
+            playerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+            playerState = savedInstanceState.getBoolean(PLAYER_STATE);
+        }
+
         // Initialize the player view.
         mPlayerView = rootView.findViewById(R.id.video_exoplayer_view);
+        loading = rootView.findViewById(R.id.progressbar_video);
 
-        setupStep();
-        if (mPlayerView.getVisibility() == View.VISIBLE) {
-            initFullscreenDialog();
-            initFullscreenButton();
+        if (Connectivity.internetAvailable(getContext())) {
+            setupStep();
+            if (mPlayerView.getVisibility() == View.VISIBLE) {
+                initFullscreenDialog();
+                initFullscreenButton();
+
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    openFullscreenDialog();
+                } else {
+                    closeFullscreenDialog();
+                }
+
+            }
+        } else {
+            setupUiOffline();
         }
+
 
         return rootView;
     }
@@ -103,32 +137,51 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
         TextView description_step = rootView.findViewById(R.id.step_description);
 
         if (getArguments() != null) {
-            String videoUrl = getArguments().getString(VIDEO_URL);
-            String thumbnailUrl = getArguments().getString(THUMBNAIL_URL);
+            videoUrl = getArguments().getString(VIDEO_URL);
+            thumbnailUrl = getArguments().getString(THUMBNAIL_URL);
+            int id = getArguments().getInt(STEP_ID);
 
             if (TextUtils.isEmpty(videoUrl)) {
                 mPlayerView.setVisibility(View.GONE);
+                loading.setVisibility(View.GONE);
             } else {
                 initializeMediaSession();
                 initializePlayer(Uri.parse(videoUrl));
             }
 
-            if (TextUtils.isEmpty(thumbnailUrl) || thumbnailUrl.endsWith("mp4")) {
-                image_step.setVisibility(View.GONE);
+            if (thumbnailUrl.endsWith("mp4")) {
                 mPlayerView.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.VISIBLE);
                 initializeMediaSession();
                 initializePlayer(Uri.parse(thumbnailUrl));
+            }
+
+            if (TextUtils.isEmpty(thumbnailUrl)) {
+                image_step.setVisibility(View.GONE);
             } else {
+                image_step.setVisibility(View.VISIBLE);
                 Glide.with(getContext())
                         .load(thumbnailUrl)
                         .into(image_step);
             }
 
-
-            id_step.setText(String.valueOf(step.getId()));
+            String idAndShortDesc = String.valueOf(id) + " - " + getArguments().getString(SHORT_DESCRIPTION);
+            id_step.setText(idAndShortDesc);
             description_step.setText(getArguments().getString(DESCRIPTION));
+
         }
 
+    }
+
+    private void setupUiOffline() {
+        FrameLayout frameLayout = rootView.findViewById(R.id.main_media_frame);
+        ScrollView scrollView = rootView.findViewById(R.id.id_scroll);
+        frameLayout.setVisibility(View.GONE);
+        scrollView.setVisibility(View.GONE);
+
+        TextView errorMessage = rootView.findViewById(R.id.empty_text);
+        errorMessage.setVisibility(View.VISIBLE);
+        errorMessage.setText(getString(R.string.no_internet_connection));
     }
 
     private void initFullscreenDialog() {
@@ -232,18 +285,25 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
             String userAgent = Util.getUserAgent(getContext(), "BakingApp");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.setPlayWhenReady(playerState);
+            mExoPlayer.seekTo(playerPosition);
         }
     }
+
 
     /**
      * Release ExoPlayer.
      */
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if (mExoPlayer != null) {
+            playerPosition = mExoPlayer.getCurrentPosition();
+            playerState = mExoPlayer.getPlayWhenReady();
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     // ExoPlayer Event Listeners
@@ -273,11 +333,19 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
         if ((playbackState == ExoPlayer.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoPlayer.getCurrentPosition(), 1f);
+            loading.setVisibility(View.GONE);
         } else if ((playbackState == ExoPlayer.STATE_READY)) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
+            loading.setVisibility(View.GONE);
+        } else if ((playbackState == ExoPlayer.STATE_BUFFERING)) {
+            loading.setVisibility(View.VISIBLE);
+        } else {
+            loading.setVisibility(View.GONE);
         }
-        mMediaSession.setPlaybackState(mStateBuilder.build());
+        if (mStateBuilder != null) {
+            mMediaSession.setPlaybackState(mStateBuilder.build());
+        }
     }
 
     @Override
@@ -289,13 +357,49 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     /**
-     * Release the player when the activity is destroyed.
+     * Release the player when the activity is destroyed , stopped and in pause.
+     * Initialize the Player when the activity is resumed with the right Uri.
      */
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        mMediaSession.setActive(false);
+        if (mMediaSession != null) {
+            mMediaSession.setActive(false);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releasePlayer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Connectivity.internetAvailable(getContext())) {
+            if (videoUrl != null) {
+                initializePlayer(Uri.parse(videoUrl));
+            }
+            if (thumbnailUrl.endsWith("mp4")) {
+                initializePlayer(Uri.parse(thumbnailUrl));
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(PLAYER_POSITION, playerPosition);
+        outState.putBoolean(PLAYER_STATE, playerState);
     }
 
     /**

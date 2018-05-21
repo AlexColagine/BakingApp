@@ -1,10 +1,10 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.utils;
 
 /**
  * Created by Alessandro on 11/04/2018.
  */
 
-public class Utils {
+public class StringUtils {
 
     /**
      * Entity Name
@@ -23,6 +23,7 @@ public class Utils {
     public static final String STEPS = "steps";
     public static final String SERVINGS = "servings";
     public static final String IMAGE = "image";
+    public static final String RECIPE_ID = "recipe_ID";
 
     /**
      * Entity Ingredients
@@ -41,10 +42,20 @@ public class Utils {
     public static final String DESCRIPTION = "description";
     public static final String VIDEO_URL = "videoURL";
     public static final String THUMBNAIL_URL = "thumbnailURL";
+    public static final String STEPS_ARRAYLIST = "step_arraylist";
 
     /**
      * Key used for the ArrayList of Recipe
      */
     public static final String RECIPE_KEY = "Recipe";
 
+    /**
+     * Strings used to save the state
+     */
+    public static final String PLAYER_POSITION = "saved_player_position";
+    public static final String PLAYER_STATE = "saved_player_state";
+    public static final String RECYCLER_INGREDIENTS_STATE = "ingredients_state";
+    public static final String RECYCLER_STEPS_STATE = "steps_state";
+
+    public static final String TABLET = "tablet";
 }

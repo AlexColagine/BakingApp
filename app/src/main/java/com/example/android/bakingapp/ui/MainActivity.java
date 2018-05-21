@@ -1,8 +1,10 @@
 package com.example.android.bakingapp.ui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.example.android.bakingapp.adapters.RecipeAdapter;
 import com.example.android.bakingapp.api.BakingAPI;
 import com.example.android.bakingapp.api.EndPoint;
 import com.example.android.bakingapp.model.Recipe;
+import com.example.android.bakingapp.utils.Connectivity;
 
 import java.util.ArrayList;
 
@@ -58,10 +61,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             @Override
             public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
-                swipe.setRefreshing(false);
-                loadingIndicator.setVisibility(View.GONE);
-                errorMessage.setVisibility(View.VISIBLE);
-                errorMessage.setText(getString(R.string.no_internet_connection));
+                if (!Connectivity.internetAvailable(getApplicationContext())){
+                    swipe.setRefreshing(false);
+                    loadingIndicator.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    errorMessage.setText(getString(R.string.no_internet_connection));
+                } else {
+                    loadingIndicator.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    errorMessage.setText(getString(R.string.no_download_data));
+                }
             }
         });
 
@@ -73,7 +82,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         errorMessage = findViewById(R.id.empty_text);
         recipeView = findViewById(R.id.recycler_recipe);
-        recipeView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            recipeView.setLayoutManager(new GridLayoutManager(getApplicationContext() , 2));
+        } else {
+            recipeView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+        }
+
         recipeView.setHasFixedSize(true);
         recipeAdapter = new RecipeAdapter(getApplicationContext(), recipeList);
         recipeView.setAdapter(recipeAdapter);
@@ -88,6 +103,5 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             recipeList.clear();
             getApi();
         }
-        //getApi();
     }
 }

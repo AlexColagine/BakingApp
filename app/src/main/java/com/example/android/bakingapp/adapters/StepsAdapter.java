@@ -1,7 +1,6 @@
 package com.example.android.bakingapp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,11 +10,8 @@ import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.model.Steps;
-import com.example.android.bakingapp.ui.StepActivity;
 
 import java.util.ArrayList;
-
-import static com.example.android.bakingapp.Utils.STEPS;
 
 /**
  * Created by Alessandro on 13/04/2018.
@@ -25,10 +21,16 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
 
     private Context mContext;
     private ArrayList<Steps> stepArrayList = new ArrayList<>();
+    private StepClickListener stepClick;
 
-    public StepsAdapter(Context context , ArrayList<Steps> stepArrayList){
+    public interface StepClickListener{
+        void stepItemClick(Steps steps);
+    }
+
+    public StepsAdapter(Context context , ArrayList<Steps> stepArrayList , StepClickListener stepClick){
         this.mContext = context;
         this.stepArrayList = stepArrayList;
+        this.stepClick = stepClick;
     }
 
     @Override
@@ -43,14 +45,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
 
         holder.numberStep.setText(String.valueOf(steps.getId()));
         holder.shortDescription.setText(steps.getShortDescription());
-        holder.clickItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent sendStep = new Intent(mContext , StepActivity.class);
-                sendStep.putExtra(STEPS , steps);
-                mContext.startActivity(sendStep);
-            }
-        });
+
     }
 
     @Override
@@ -58,7 +53,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
         return (stepArrayList != null) ? stepArrayList.size() : 0;
     }
 
-    public class StepsViewHolder extends RecyclerView.ViewHolder  {
+    public class StepsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
         ConstraintLayout clickItem;
         TextView numberStep;
@@ -69,6 +64,13 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsViewHol
             clickItem = itemView.findViewById(R.id.constraint_step);
             numberStep = itemView.findViewById(R.id.text_id);
             shortDescription = itemView.findViewById(R.id.text_short_description);
+
+            clickItem.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            stepClick.stepItemClick(stepArrayList.get(getAdapterPosition()));
         }
     }
 }

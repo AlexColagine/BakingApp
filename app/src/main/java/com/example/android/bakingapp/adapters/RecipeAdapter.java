@@ -18,7 +18,7 @@ import com.example.android.bakingapp.ui.RecipeActivity;
 
 import java.util.ArrayList;
 
-import static com.example.android.bakingapp.Utils.RECIPE_KEY;
+import static com.example.android.bakingapp.utils.StringUtils.RECIPE_KEY;
 
 /**
  * Created by Alessandro on 16/04/2018.
@@ -29,10 +29,18 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private Context mContext;
     private ArrayList<Recipe> recipeArrayList = new ArrayList<>();
     int resImage;
+   // RecipeClickListener clickListener;
 
-    public RecipeAdapter(Context context, ArrayList<Recipe> recipeArrayList) {
+  /*  public interface RecipeClickListener {
+        void onRecipeClickImage(Recipe recipe);
+
+        void onRecipeClickFavorite(Recipe recipe);
+    } */
+
+    public RecipeAdapter(Context context, ArrayList<Recipe> recipeArrayList /*RecipeClickListener clickListener*/) {
         this.mContext = context;
         this.recipeArrayList = recipeArrayList;
+        //this.clickListener = clickListener;
     }
 
     @Override
@@ -97,12 +105,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     }
 
+
     @Override
     public int getItemCount() {
         return (recipeArrayList != null) ? recipeArrayList.size() : 0;
     }
 
-    public class RecipeViewHolder extends RecyclerView.ViewHolder {
+    public class RecipeViewHolder extends RecyclerView.ViewHolder{
 
         ImageView recipeImage;
         TextView recipeName;

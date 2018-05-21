@@ -13,8 +13,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import static com.example.android.bakingapp.Utils.INGREDIENTS;
-import static com.example.android.bakingapp.Utils.STEPS;
+import static com.example.android.bakingapp.utils.StringUtils.INGREDIENTS;
+import static com.example.android.bakingapp.utils.StringUtils.STEPS;
 
 /**
  * Created by Alessandro on 11/04/2018.
@@ -33,11 +33,11 @@ public class Recipe implements Parcelable {
     String name;
 
     @SerializedName(INGREDIENTS)
-            @Ignore
+    @Ignore
     ArrayList<Ingredients> ingredient = null;
 
     @SerializedName(STEPS)
-            @Ignore
+    @Ignore
     ArrayList<Steps> step = null;
 
     @SerializedName(BakingContract.RecipeEntry.COLUMN_SERVINGS)
@@ -53,7 +53,7 @@ public class Recipe implements Parcelable {
     public Recipe() {
     }
 
-    public boolean getFavorite(){
+    public boolean getFavorite() {
         return favorite;
     }
 
@@ -105,10 +105,9 @@ public class Recipe implements Parcelable {
         this.image = image;
     }
 
-    public void setFavorite(boolean favorite){
+    public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
-
 
 
     /**

@@ -3,22 +3,23 @@ package com.example.android.bakingapp.database;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import static com.example.android.bakingapp.Utils.DESCRIPTION;
-import static com.example.android.bakingapp.Utils.ID;
-import static com.example.android.bakingapp.Utils.IMAGE;
-import static com.example.android.bakingapp.Utils.INGREDIENT;
-import static com.example.android.bakingapp.Utils.INGREDIENT_ID;
-import static com.example.android.bakingapp.Utils.MEASURE;
-import static com.example.android.bakingapp.Utils.NAME;
-import static com.example.android.bakingapp.Utils.QUANTITY;
-import static com.example.android.bakingapp.Utils.RECIPE;
-import static com.example.android.bakingapp.Utils.SERVINGS;
-import static com.example.android.bakingapp.Utils.SHORT_DESCRIPTION;
-import static com.example.android.bakingapp.Utils.STEP_ID;
-import static com.example.android.bakingapp.Utils.TABLE_INGREDIENTS;
-import static com.example.android.bakingapp.Utils.TABLE_STEPS;
-import static com.example.android.bakingapp.Utils.THUMBNAIL_URL;
-import static com.example.android.bakingapp.Utils.VIDEO_URL;
+import static com.example.android.bakingapp.utils.StringUtils.DESCRIPTION;
+import static com.example.android.bakingapp.utils.StringUtils.ID;
+import static com.example.android.bakingapp.utils.StringUtils.IMAGE;
+import static com.example.android.bakingapp.utils.StringUtils.INGREDIENT;
+import static com.example.android.bakingapp.utils.StringUtils.INGREDIENT_ID;
+import static com.example.android.bakingapp.utils.StringUtils.MEASURE;
+import static com.example.android.bakingapp.utils.StringUtils.NAME;
+import static com.example.android.bakingapp.utils.StringUtils.QUANTITY;
+import static com.example.android.bakingapp.utils.StringUtils.RECIPE;
+import static com.example.android.bakingapp.utils.StringUtils.RECIPE_ID;
+import static com.example.android.bakingapp.utils.StringUtils.SERVINGS;
+import static com.example.android.bakingapp.utils.StringUtils.SHORT_DESCRIPTION;
+import static com.example.android.bakingapp.utils.StringUtils.STEP_ID;
+import static com.example.android.bakingapp.utils.StringUtils.TABLE_INGREDIENTS;
+import static com.example.android.bakingapp.utils.StringUtils.TABLE_STEPS;
+import static com.example.android.bakingapp.utils.StringUtils.THUMBNAIL_URL;
+import static com.example.android.bakingapp.utils.StringUtils.VIDEO_URL;
 
 /**
  * Created by Alessandro on 16/04/2018.
@@ -54,11 +55,16 @@ public class BakingContract {
         public static final String COLUMN_QUANTITY = QUANTITY;
         public static final String COLUMN_MEASURE = MEASURE;
         public static final String COLUMN_INGREDIENT = INGREDIENT;
+        public static final String COLUMN_RECIPE_ID = RECIPE_ID;
 
-        private static final Uri CONTENT_URI =
+        public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon()
                 .appendPath(TABLE_NAME)
                 .build();
+
+        public static final Uri.Builder CONTENT_ITEM_URI =
+                BASE_CONTENT_URI.buildUpon()
+                        .appendPath(TABLE_NAME);
 
     }
 

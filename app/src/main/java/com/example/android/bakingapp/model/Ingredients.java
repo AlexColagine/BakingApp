@@ -2,6 +2,7 @@ package com.example.android.bakingapp.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.ContentValues;
 import android.os.Parcel;
@@ -14,12 +15,16 @@ import com.google.gson.annotations.SerializedName;
  * Created by Alessandro on 11/04/2018.
  */
 
-@Entity(tableName = BakingContract.IngredientsEntry.TABLE_NAME)
+@Entity(tableName = BakingContract.IngredientsEntry.TABLE_NAME,
+        foreignKeys = @ForeignKey(entity = Recipe.class,
+                parentColumns = BakingContract.RecipeEntry.COLUMN_ID,
+                childColumns = BakingContract.IngredientsEntry.COLUMN_RECIPE_ID))
 public class Ingredients implements Parcelable {
 
 
     @PrimaryKey(autoGenerate = true)
-    int id;
+    @ColumnInfo(name = BakingContract.IngredientsEntry.COLUMN_ID)
+    long id;
 
     @SerializedName(BakingContract.IngredientsEntry.COLUMN_QUANTITY)
     @ColumnInfo(name = BakingContract.IngredientsEntry.COLUMN_QUANTITY)
@@ -33,11 +38,14 @@ public class Ingredients implements Parcelable {
     @ColumnInfo(name = BakingContract.IngredientsEntry.COLUMN_INGREDIENT)
     String ingredient;
 
+    @ColumnInfo(index = true, name = BakingContract.IngredientsEntry.COLUMN_RECIPE_ID)
+    long recipeID;
+
 
     public Ingredients() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -53,7 +61,11 @@ public class Ingredients implements Parcelable {
         return ingredient;
     }
 
-    public void setId(int id) {
+    public long getRecipeID() {
+        return recipeID;
+    }
+
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -67,6 +79,10 @@ public class Ingredients implements Parcelable {
 
     public void setIngredient(String ingredient) {
         this.ingredient = ingredient;
+    }
+
+    public void setRecipeID(long recipeID) {
+        this.recipeID = recipeID;
     }
 
     /**
@@ -83,6 +99,9 @@ public class Ingredients implements Parcelable {
 
         if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_ID)) {
             ingredients.setId(values.getAsInteger(BakingContract.IngredientsEntry.COLUMN_ID));
+        }
+        if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_RECIPE_ID)) {
+            ingredients.setId(values.getAsInteger(BakingContract.IngredientsEntry.COLUMN_RECIPE_ID));
         }
         if (values.containsKey(BakingContract.IngredientsEntry.COLUMN_QUANTITY)) {
             ingredients.setQuantity(values.getAsDouble(BakingContract.IngredientsEntry.COLUMN_QUANTITY));
@@ -104,20 +123,22 @@ public class Ingredients implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeLong(this.id);
         dest.writeDouble(this.quantity);
         dest.writeString(this.measure);
         dest.writeString(this.ingredient);
+        dest.writeLong(this.recipeID);
     }
 
     protected Ingredients(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readLong();
         this.quantity = in.readDouble();
         this.measure = in.readString();
         this.ingredient = in.readString();
+        this.recipeID = in.readLong();
     }
 
-    public static final Parcelable.Creator<Ingredients> CREATOR = new Parcelable.Creator<Ingredients>() {
+    public static final Creator<Ingredients> CREATOR = new Creator<Ingredients>() {
         @Override
         public Ingredients createFromParcel(Parcel source) {
             return new Ingredients(source);
