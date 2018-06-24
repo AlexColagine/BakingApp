@@ -5,6 +5,7 @@
 
     <string name="no_internet_connection">Connection not found!</string>
     <string name="no_download_data">There aren\'t recipes</string>
+    <string name="toast_message">Widget updated</string>
 
     <string name="fragment_ingredients">Ingredients</string>
     <string name="fragment_steps">Steps</string>

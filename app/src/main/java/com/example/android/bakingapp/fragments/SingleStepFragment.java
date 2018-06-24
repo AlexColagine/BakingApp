@@ -112,17 +112,6 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
 
         if (Connectivity.internetAvailable(getContext())) {
             setupStep();
-            if (mPlayerView.getVisibility() == View.VISIBLE) {
-                initFullscreenDialog();
-                initFullscreenButton();
-
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    openFullscreenDialog();
-                } else {
-                    closeFullscreenDialog();
-                }
-
-            }
         } else {
             setupUiOffline();
         }
@@ -147,6 +136,7 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
             } else {
                 initializeMediaSession();
                 initializePlayer(Uri.parse(videoUrl));
+                setupFullScreenPlayerView();
             }
 
             if (thumbnailUrl.endsWith("mp4")) {
@@ -154,6 +144,7 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
                 loading.setVisibility(View.VISIBLE);
                 initializeMediaSession();
                 initializePlayer(Uri.parse(thumbnailUrl));
+                setupFullScreenPlayerView();
             }
 
             if (TextUtils.isEmpty(thumbnailUrl)) {
@@ -171,6 +162,16 @@ public class SingleStepFragment extends Fragment implements ExoPlayer.EventListe
 
         }
 
+    }
+
+    private void setupFullScreenPlayerView(){
+        initFullscreenDialog();
+        initFullscreenButton();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            openFullscreenDialog();
+        } else {
+            closeFullscreenDialog();
+        }
     }
 
     private void setupUiOffline() {

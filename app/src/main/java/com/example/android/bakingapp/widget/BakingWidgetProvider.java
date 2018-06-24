@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import com.example.android.bakingapp.R;
-import com.example.android.bakingapp.ui.MainActivity;
 
 /**
  * Created by Alessandro on 16/05/2018.
@@ -19,17 +18,27 @@ import com.example.android.bakingapp.ui.MainActivity;
 
 public class BakingWidgetProvider extends AppWidgetProvider {
 
+    public static String title;
+    public static String listIngredients;
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId){
 
         RemoteViews views = new RemoteViews(context.getPackageName() , R.layout.widget_design);
+        if(title == null){
+            title = "Baking Widget";
+            listIngredients = "Empty";
+        }
 
-        Intent sendService = new Intent(context , BakingWidgetService.class);
-        views.setRemoteAdapter(R.id.list_widget , sendService);
+        views.setTextViewText(R.id.title_widget , title);
+        views.setTextViewText(R.id.ingredients_widget ,listIngredients);
 
-        Intent launchApp = new Intent(context, MainActivity.class);
-        PendingIntent appPendingIntent = PendingIntent.getActivity(context , 0 , launchApp , PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setPendingIntentTemplate(R.id.list_widget , appPendingIntent);
+       /* Intent sendService = new Intent(context , BakingWidgetService.class);
+        views.setRemoteAdapter(R.id.list_widget , sendService); */
+
+        Intent launchApp = new Intent(context, com.example.android.bakingapp.ui.MainActivity.class);
+        PendingIntent appPendingIntent = PendingIntent.getActivity(context , 0 , launchApp , android.app.PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.ll_widget , appPendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
 

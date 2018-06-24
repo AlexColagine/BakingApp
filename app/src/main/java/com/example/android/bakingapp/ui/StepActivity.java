@@ -1,6 +1,7 @@
 
 package com.example.android.bakingapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -18,20 +19,21 @@ public class StepActivity extends AppCompatActivity {
 
     ArrayList<Steps> singleStepArray;
     Steps singleStep;
+    int stepID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step);
 
-        Bundle data = getIntent().getExtras();
-        singleStep = data.getParcelable(STEPS);
+        if(savedInstanceState == null){
+            Intent intent = getIntent();
+            singleStep = intent.getParcelableExtra(STEPS);
+            singleStepArray = intent.getParcelableArrayListExtra(STEPS_ARRAYLIST);
+            stepID = singleStep.getId();
 
-        if (singleStep != null) {
-            int stepID = singleStep.getId();
-
-
-            singleStepArray = data.getParcelableArrayList(STEPS_ARRAYLIST);
+            Bundle data = new Bundle();
+            data.putParcelable(STEPS , singleStep);
             data.putParcelableArrayList(STEPS_ARRAYLIST, singleStepArray);
             data.putInt(STEP_ID, stepID);
 
@@ -40,8 +42,27 @@ public class StepActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.step_container, pagerStepFragment)
                     .commit();
-        }
+        } else {
+          singleStep = savedInstanceState.getParcelable(STEPS);
+          stepID = savedInstanceState.getInt(STEP_ID);
+          singleStepArray = savedInstanceState.getParcelableArrayList(STEPS_ARRAYLIST);
+          }
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STEPS , singleStep);
+        outState.putInt(STEP_ID , stepID);
+        outState.putParcelableArrayList(STEPS_ARRAYLIST , singleStepArray);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        singleStep = savedInstanceState.getParcelable(STEPS);
+        stepID = savedInstanceState.getInt(STEP_ID);
+        singleStepArray = savedInstanceState.getParcelableArrayList(STEPS_ARRAYLIST);
+    }
 }

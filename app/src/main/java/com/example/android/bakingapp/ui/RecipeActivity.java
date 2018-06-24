@@ -97,52 +97,7 @@ public class RecipeActivity extends AppCompatActivity /*implements StepsAdapter.
         }
         return super.onOptionsItemSelected(item);
     }
-/*
-    private void setupUiTablet(){
-        setupIngredientUiTablet();
-        setupStepUiTablet();
-    }
 
-    private void setupIngredientUiTablet(){
-        IngredientsAdapter ingredientsAdapter;
-        ArrayList<Ingredients> ingredientsArrayList = recipe.getIngredient();
-        RecyclerView ingredientsView = findViewById(R.id.rv_tablet_ingredients);
-
-        ingredientsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        ingredientsView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        ingredientsView.setHasFixedSize(true);
-
-        ingredientsAdapter = new IngredientsAdapter(this, ingredientsArrayList);
-        ingredientsView.setAdapter(ingredientsAdapter);
-    }
-
-    private void setupStepUiTablet(){
-        StepsAdapter stepsAdapter;
-        stepsArrayList = recipe.getStep();
-        RecyclerView stepsView = findViewById(R.id.rv_tablet_steps);
-
-        stepsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        stepsView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        stepsView.setHasFixedSize(true);
-
-        stepsAdapter = new StepsAdapter(this, stepsArrayList , this);
-        stepsView.setAdapter(stepsAdapter);
-    }
-
-*/
-/*    @Override
-    public void stepItemClick(Steps steps) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Bundle data = new Bundle();
-        data.putParcelableArrayList(STEPS_ARRAYLIST , stepsArrayList);
-        data.putInt(STEP_ID , steps.getId());
-
-        ViewPagerStepFragment pagerStepFragment = new ViewPagerStepFragment();
-        pagerStepFragment.setArguments(data);
-        fragmentManager.beginTransaction()
-                .replace(R.id.tablet_step_container , pagerStepFragment)
-                .commit();
-    }  */
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

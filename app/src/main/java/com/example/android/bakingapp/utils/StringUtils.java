@@ -56,6 +56,8 @@ public class StringUtils {
     public static final String PLAYER_STATE = "saved_player_state";
     public static final String RECYCLER_INGREDIENTS_STATE = "ingredients_state";
     public static final String RECYCLER_STEPS_STATE = "steps_state";
+    public static final String RECYCLER_RECIPE_STATE = "recipe_state";
+    public static final String RECIPE_LIST_STATE = "recipe_arraylist_state";
 
     public static final String TABLET = "tablet";
 }

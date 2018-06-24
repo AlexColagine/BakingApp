@@ -27,20 +27,18 @@ import static com.example.android.bakingapp.utils.StringUtils.RECIPE_KEY;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     private Context mContext;
-    private ArrayList<Recipe> recipeArrayList = new ArrayList<>();
+    private ArrayList<Recipe> recipeArrayList;
     int resImage;
-   // RecipeClickListener clickListener;
+    RecipeClickListener clickListener;
 
-  /*  public interface RecipeClickListener {
-        void onRecipeClickImage(Recipe recipe);
+    public interface RecipeClickListener {
+        void onRecipeClickFavorite(Recipe recipe, FloatingActionButton fabFavorite);
+    }
 
-        void onRecipeClickFavorite(Recipe recipe);
-    } */
-
-    public RecipeAdapter(Context context, ArrayList<Recipe> recipeArrayList /*RecipeClickListener clickListener*/) {
+    public RecipeAdapter(Context context, ArrayList<Recipe> recipeArrayList, RecipeClickListener clickListener) {
         this.mContext = context;
         this.recipeArrayList = recipeArrayList;
-        //this.clickListener = clickListener;
+        this.clickListener = clickListener;
     }
 
     @Override
@@ -90,19 +88,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             }
         });
 
-        holder.fabFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!recipe.getFavorite()) {
-                    holder.fabFavorite.setImageResource(R.drawable.icon_fill_fab);
-                    recipe.setFavorite(true);
-                } else {
-                    holder.fabFavorite.setImageResource(R.drawable.icon_fab);
-                    recipe.setFavorite(false);
-                }
-            }
-        });
-
     }
 
 
@@ -111,7 +96,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         return (recipeArrayList != null) ? recipeArrayList.size() : 0;
     }
 
-    public class RecipeViewHolder extends RecyclerView.ViewHolder{
+    public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView recipeImage;
         TextView recipeName;
@@ -122,7 +107,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             recipeImage = itemView.findViewById(R.id.image_recipe);
             recipeName = itemView.findViewById(R.id.text_recipe);
             fabFavorite = itemView.findViewById(R.id.fab);
+
+            fabFavorite.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            clickListener.onRecipeClickFavorite(recipeArrayList.get(getAdapterPosition()), fabFavorite);
+        }
     }
 }

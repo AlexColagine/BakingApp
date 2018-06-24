@@ -27,6 +27,7 @@ public class ViewPagerStepFragment extends Fragment {
     View rootView;
     int currentPosition;
     ArrayList<Steps> stepsArrayList;
+    ViewPager mViewPager;
 
     public static ViewPagerStepFragment newInstance(int stepID){
         ViewPagerStepFragment pagerStepFragment = new ViewPagerStepFragment();
@@ -36,6 +37,15 @@ public class ViewPagerStepFragment extends Fragment {
 
         return pagerStepFragment;
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null){
+            currentPosition = savedInstanceState.getInt(STEP_ID);
+        }
+    }
+
 
     @Nullable
     @Override
@@ -58,7 +68,7 @@ public class ViewPagerStepFragment extends Fragment {
 
         mStepPagerAdapter.setSteps(stepsArrayList);
 
-        ViewPager mViewPager = rootView.findViewById(R.id.container);
+        mViewPager = rootView.findViewById(R.id.container);
         mViewPager.setAdapter(mStepPagerAdapter);
         mViewPager.setCurrentItem(currentPosition);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -80,4 +90,9 @@ public class ViewPagerStepFragment extends Fragment {
 
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STEP_ID , currentPosition);
+    }
 }
